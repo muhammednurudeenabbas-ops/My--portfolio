@@ -1,0 +1,253 @@
+let tasbihCount = 0;
+
+
+// Save user name
+function saveName(){
+
+let name = document.getElementById("userName").value;
+
+if(name){
+
+localStorage.setItem("nuraqName", name);
+
+document.getElementById("welcomeName").innerHTML =
+"Welcome " + name + " 🤲";
+
+}
+
+}
+
+
+// Load saved name
+window.onload = function(){
+
+let savedName = localStorage.getItem("nuraqName");
+
+if(savedName){
+
+let welcome = document.getElementById("welcomeName");
+
+if(welcome){
+
+welcome.innerHTML =
+"Welcome " + savedName + " 🤲";
+
+}
+
+}
+
+};
+
+
+// Dark mode
+function darkMode(){
+
+document.body.classList.toggle("light");
+
+}
+
+
+// Daily reminders
+
+let reminders = [
+
+"Remember Allah and keep your prayers.",
+
+"Do not forget your daily Dhikr.",
+
+"Allah is always near to those who remember Him.",
+
+"Keep your Salah strong and your heart peaceful."
+
+];
+
+
+function newReminder(){
+
+let random = Math.floor(Math.random() * reminders.length);
+
+document.getElementById("dailyReminder").innerHTML =
+reminders[random];
+
+}
+
+
+// Prayer reminder
+
+function prayerReminder(){
+
+alert("🔔 Remember your Salah. May Allah accept your prayers.");
+
+}
+
+
+// Tasbih Counter
+
+function increaseTasbih(){
+
+tasbihCount++;
+
+document.getElementById("count").innerHTML =
+tasbihCount;
+
+}
+
+
+function resetTasbih(){
+
+tasbihCount = 0;
+
+document.getElementById("count").innerHTML =
+0;
+
+}
+
+
+// Dua Search
+
+function searchDua(){
+
+let input =
+document.getElementById("duaSearch").value.toLowerCase();
+
+let duaList =
+document.getElementById("duaList");
+
+let text =
+duaList.innerHTML.toLowerCase();
+
+
+if(text.includes(input)){
+
+duaList.style.display = "block";
+
+}else{
+
+duaList.style.display = "none";
+
+}
+
+}
+
+
+// Save Favourite Dua
+
+function saveDua(){
+
+let dua =
+document.getElementById("duaText").innerHTML;
+
+
+localStorage.setItem("favoriteDua", dua);
+
+
+document.getElementById("savedDua").innerHTML =
+"⭐ Favourite Dua Saved";
+
+}
+
+
+// Load Favourite Dua
+
+window.addEventListener("load", function(){
+
+let saved =
+localStorage.getItem("favoriteDua");
+
+
+let area =
+document.getElementById("savedDua");
+
+
+if(saved && area){
+
+area.innerHTML =
+"⭐ Saved: " + saved;
+
+}
+
+});
+
+
+// Navigation
+
+function showHome(){
+
+alert("🏠 Welcome to Nuraq Prayers Home");
+
+}
+
+
+function showDuas(){
+
+alert("📖 Open Dua section");
+
+}
+
+
+function showTasbih(){
+
+alert("📿 Open Tasbih section");
+
+}
+
+
+function showAbout(){
+
+alert("ℹ️ Nuraq Prayers - Your Salah and Dhikr companion");
+
+}
+
+
+// Qibla Page
+
+function openQibla(){
+
+document.querySelector("main").innerHTML = `
+
+<section class="card">
+
+<h2>🧭 Qibla Finder</h2>
+
+<p>
+The Qibla direction points towards the Kaaba in Makkah.
+</p>
+
+<p>
+📍 Allow location access to find your direction.
+</p>
+
+<button onclick="getLocation()">
+Find My Qibla
+</button>
+
+<p id="qiblaResult"></p>
+
+</section>
+
+`;
+
+}
+
+
+// Get Location
+
+function getLocation(){
+
+if(navigator.geolocation){
+
+navigator.geolocation.getCurrentPosition(function(){
+
+document.getElementById("qiblaResult").innerHTML =
+
+"🕋 Qibla feature is ready. Compass direction will be added next.";
+
+});
+
+}else{
+
+alert("Location is not supported on this device");
+
+}
+
+  }
