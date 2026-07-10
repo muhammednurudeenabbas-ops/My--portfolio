@@ -1,280 +1,126 @@
 * {
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
+  box-sizing: border-box;
 }
-
 
 body {
-    margin: 0;
-    background: #eef7f2;
-    color: #222;
-    transition: 0.3s;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background: #080808;
+  color: white;
 }
 
-
-
-header {
-
-    background: linear-gradient(135deg, #087f5b, #0b5d45);
-    color: white;
-    text-align: center;
-    padding: 30px 15px;
-    border-radius: 0 0 25px 25px;
-
-}
-
-
-
-header h1 {
-
-    font-size: 35px;
-
-}
-
-
-
-
-button {
-
-    background: #087f5b;
-    color: white;
-    border: none;
-    padding: 13px;
-    width: 48%;
-    border-radius: 12px;
-    font-size: 16px;
-
-}
-
-
-
-
-.card {
-
-    background: white;
-    width: 92%;
-    max-width: 450px;
-    margin: 20px auto;
-    padding: 22px;
-    border-radius: 20px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.12);
-
-}
-
-
-
-
-.card h2 {
-
-    color: #087f5b;
-    text-align: center;
-
-}
-
-
-
-
-label {
-
-    display: block;
-    padding: 8px;
-    font-size: 18px;
-
-}
-
-
-
-
-select,
-input {
-
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    margin-top: 10px;
-
-}
-
-
-
-
-#count {
-
-    text-align: center;
-    font-size: 55px;
-    color: #087f5b;
-
-}
-
-
-
-
-
-
-/* DARK MODE */
-
-
-.dark {
-
-    background: #121212;
-    color: white;
-
-}
-
-
-
-.dark .card {
-
-    background: #1e1e1e;
-    color: white;
-
-}
-
-
-
-.dark .card h2 {
-
-    color: #4ee59a;
-
-}
-
-
-
-.dark #count {
-
-    color: #4ee59a;
-
-}
-
-
-
-
-
-
-/* WELCOME SCREEN LOGO */
-
-
+/* Welcome screen */
 #welcomeScreen {
-
-    text-align: center;
-    padding: 40px 20px;
-
+  text-align: center;
+  padding: 30px 20px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #120018, #000000);
 }
-
-
 
 .logo {
-
-    font-size: 80px;
-    margin-bottom: 20px;
-
+  font-size: 60px;
+  margin-bottom: 10px;
 }
 
 
+/* Header */
+header {
+  background: linear-gradient(135deg, #6a0dad, #1b002b);
+  padding: 20px;
+  text-align: center;
+  border-bottom: 2px solid #b56cff;
+}
 
-#welcomeScreen h1 {
-
-    font-size: 40px;
-
+header h1 {
+  margin: 0;
 }
 
 
-
-#welcomeScreen p {
-
-    font-size: 18px;
-
-} button {
-    background: #087f5b;
-    color: white;
-    border: none;
-    padding: 12px 18px;
-    border-radius: 15px;
-    font-size: 16px;
-    margin: 5px;
-    cursor: pointer;
-} .dashboard {
-    width: 92%;
-    max-width: 450px;
-    margin: 20px auto;
+/* Navigation */
+nav {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 
-.dashboard .card {
-    text-align: center;
+/* Main */
+main {
+  padding: 15px;
 }
 
 
-.dashboard h2 {
-    margin-bottom: 10px;
-} .bottom-nav {
+/* Cards */
+.card {
+  background: #151515;
+  border-radius: 18px;
+  padding: 20px;
+  margin: 15px 0;
+  border: 1px solid #6a0dad;
+  box-shadow: 0 0 15px rgba(106,13,173,0.5);
+}
 
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-
-    background: white;
-
-    display: flex;
-    justify-content: space-around;
-
-    padding: 10px;
-
-    box-shadow: 0 -3px 10px rgba(0,0,0,0.15);
-
+.card h2 {
+  color: #d8a7ff;
 }
 
 
-.bottom-nav button {
+/* Buttons */
+button {
+  background: #6a0dad;
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  margin: 5px;
+  border-radius: 12px;
+  font-size: 15px;
+}
 
-    width: auto;
-    background: transparent;
-    color: #087f5b;
-
-} .logo {
-
-    width: 120px;
-    height: 120px;
-
-    margin: 20px auto;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background: #087f5b;
-
-    color: white;
-
-    font-size: 60px;
-
-} #welcomeScreen {
-
-    animation: fadeIn 1.5s ease;
-
+button:hover {
+  background: #9b4dff;
 }
 
 
-@keyframes fadeIn {
+/* Inputs */
+input,
+select {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: 1px solid #6a0dad;
+  background: #222;
+  color: white;
+}
 
-    from {
 
-        opacity: 0;
-
-        transform: scale(0.9);
-
-    }
+/* Prayer list */
+.card p {
+  line-height: 1.6;
+}
 
 
-    to {
+/* Tasbih */
+#count {
+  text-align: center;
+  font-size: 50px;
+  color: #c084fc;
+}
 
-        opacity: 1;
 
-        transform: scale(1);
+/* Footer */
+footer {
+  text-align: center;
+  padding: 20px;
+  color: #aaa;
+}
 
-    }
 
+/* Light mode support */
+.light {
+  background: white;
+  color: black;
 }
