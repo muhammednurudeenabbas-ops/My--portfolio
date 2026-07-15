@@ -1,186 +1,283 @@
-let count = Number(localStorage.getItem("tasbihCount")) || 0;
+let currentUser = "";
+
+let mediaRecorder;
+
+let audioChunks = [];
+
+let audioURL = "";
 
 
-let reminders = [
-    "Remember Allah and keep your prayers.",
-    "Start your day with Bismillah.",
-    "Make time for Salah, it brings peace to the heart.",
-    "Be thankful for Allah's blessings.",
-    "Keep your tongue busy with Dhikr.",
-    "Allah is always near to those who remember Him."
-];
+// DATABASE
+
+let users = JSON.parse(localStorage.getItem("nuraqUsers")) || [];
+
+let groups = JSON.parse(localStorage.getItem("nuraqGroups")) || [];
+
+let messages = JSON.parse(localStorage.getItem("nuraqMessages")) || [];
+
+let posts = JSON.parse(localStorage.getItem("nuraqPosts")) || [];
+
+let notifications = JSON.parse(localStorage.getItem("nuraqNotifications")) || [];
+
+let photos = JSON.parse(localStorage.getItem("nuraqPhotos")) || {};
+
+let onlineUsers = JSON.parse(localStorage.getItem("nuraqOnline")) || {};
 
 
-// Start App
-function startApp(){
 
-    document.getElementById("welcomeScreen").style.display = "none";
+
+
+
+// CREATE ACCOUNT
+
+
+function createAccount(){
+
+
+let username =
+document.getElementById("signupUsername").value;
+
+
+let password =
+document.getElementById("signupPassword").value;
+
+
+
+if(username && password){
+
+
+let exist = users.find(function(user){
+
+return user.username === username;
+
+});
+
+
+
+if(exist){
+
+document.getElementById("signupMessage").innerHTML =
+"Username already exists";
+
+return;
 
 }
 
 
-// Daily Reminder
-function newReminder(){
 
-    let random =
-    reminders[Math.floor(Math.random() * reminders.length)];
+users.push({
 
-    document.getElementById("dailyReminder").innerHTML =
-    random;
+username:username,
+
+password:password
+
+});
+
+
+
+localStorage.setItem(
+
+"nuraqUsers",
+
+JSON.stringify(users)
+
+);
+
+
+
+document.getElementById("signupMessage").innerHTML =
+"Account created successfully ✅";
+
+
+}else{
+
+
+document.getElementById("signupMessage").innerHTML =
+"Fill all fields";
+
 
 }
 
 
-// Prayer Reminder
-function prayerReminder(){
+}
 
-    alert("🕌 Time to remember Allah and prepare for Salah 🤲");
+
+
+
+
+
+
+// LOGIN
+
+
+function login(){
+
+
+let username =
+document.getElementById("loginUsername").value;
+
+
+let password =
+document.getElementById("loginPassword").value;
+
+
+
+let found = users.find(function(user){
+
+
+return user.username === username &&
+user.password === password;
+
+
+});
+
+
+
+if(found){
+
+
+currentUser=username;
+
+
+onlineUsers[currentUser]=true;
+
+
+localStorage.setItem(
+
+"nuraqOnline",
+
+JSON.stringify(onlineUsers)
+
+);
+
+
+
+document.getElementById("signupPage").style.display="none";
+
+
+document.getElementById("loginPage").style.display="none";
+
+
+document.getElementById("homePage").style.display="block";
+
+
+document.getElementById("userDisplay").innerHTML =
+username;
+
+
+
+}else{
+
+
+document.getElementById("loginMessage").innerHTML =
+"Wrong username or password";
+
+
+}
+
 
 }
 
 
 
-// Load App
-window.onload = function(){
-
-    document.getElementById("count").innerHTML = count;
-
-
-    let random =
-    reminders[Math.floor(Math.random() * reminders.length)];
-
-
-    let reminderBox =
-    document.getElementById("dailyReminder");
-
-
-    if(reminderBox){
-
-        reminderBox.innerHTML = random;
-
-    }
 
 
 
-    loadPrayerProgress();
+function showHome(){
+
+
+document.getElementById("content").innerHTML=`
+
+
+<h2>🏠 Nuraq v6</h2>
+
+
+<div class="card">
+
+Welcome to Nuraq Connect v6
+
+</div>
+
+
+`;
 
 
 
-    let savedDua =
-    localStorage.getItem("favoriteDua");
+}// PROFILE
 
 
-    if(savedDua){
-
-        document.getElementById("savedDua").innerHTML =
-        "⭐ Your favourite Dua is saved";
-
-    }
+function showProfile(){
 
 
-
-    let dark =
-    localStorage.getItem("darkMode");
+document.getElementById("content").innerHTML=`
 
 
-    if(dark === "true"){
-
-        document.body.classList.add("dark");
-
-    }
+<h2>👤 Profile</h2>
 
 
-
-    let prayers =
-    document.querySelectorAll(
-        'input[type="checkbox"]'
-    );
+<div class="profile">
 
 
-    prayers.forEach((prayer,index)=>{
+<p>${currentUser}</p>
 
-        prayer.addEventListener("change",function(){
 
-            localStorage.setItem(
-                "prayer" + index,
-                prayer.checked
-            );
+<input type="file" accept="image/*" onchange="uploadPhoto(event)">
 
-        });
 
-    });
+<img id="profileImage">
+
+
+</div>
+
+
+`;
+
+
+
+loadPhoto();
+
+
+}
+
+
+
+
+
+function uploadPhoto(event){
+
+
+let file=event.target.files[0];
+
+
+let reader=new FileReader();
+
+
+
+reader.onload=function(){
+
+
+photos[currentUser]=reader.result;
+
+
+localStorage.setItem(
+
+"nuraqPhotos",
+
+JSON.stringify(photos)
+
+);
+
+
+
+loadPhoto();
+
 
 };
 
 
 
+reader.readAsDataURL(file);
 
-// Dark Mode
-function darkMode(){
-
-    document.body.classList.toggle("dark");
-
-
-    let isDark =
-    document.body.classList.contains("dark");
-
-
-    localStorage.setItem(
-        "darkMode",
-        isDark
-    );
-
-}
-
-
-
-
-// Tasbih
-function increaseTasbih(){
-
-    count++;
-
-
-    document.getElementById("count").innerHTML =
-    count;
-
-
-    localStorage.setItem(
-        "tasbihCount",
-        count
-    );
-
-
-    if(count === 99){
-
-        let type =
-        document.getElementById("tasbihType").value;
-
-
-        alert(
-        "MashaAllah! You completed 99 " + type + " 🤲"
-        );
-
-    }
-
-}
-
-
-
-
-function resetTasbih(){
-
-    count = 0;
-
-
-    document.getElementById("count").innerHTML =
-    count;
-
-
-    localStorage.setItem(
-        "tasbihCount",
-        count
-    );
 
 }
 
@@ -188,21 +285,20 @@ function resetTasbih(){
 
 
 
-// Favourite Dua
-function saveDua(){
-
-    let dua =
-    document.getElementById("duaText").innerHTML;
+function loadPhoto(){
 
 
-    localStorage.setItem(
-        "favoriteDua",
-        dua
-    );
+let img=document.getElementById("profileImage");
 
 
-    document.getElementById("savedDua").innerHTML =
-    "⭐ Favourite Dua Saved";
+if(img && photos[currentUser]){
+
+
+img.src=photos[currentUser];
+
+
+}
+
 
 }
 
@@ -210,34 +306,78 @@ function saveDua(){
 
 
 
-// Dua Search
-function searchDua(){
-
-    let input =
-    document.getElementById("duaSearch").value.toLowerCase();
 
 
-    let duas =
-    document.querySelectorAll("#duaList p");
+// SEARCH USERS
 
 
-    duas.forEach(function(dua){
-
-        let text =
-        dua.innerText.toLowerCase();
+function showSearch(){
 
 
-        if(text.includes(input)){
+document.getElementById("content").innerHTML=`
 
-            dua.style.display = "block";
 
-        }else{
+<h2>🔍 Search Users</h2>
 
-            dua.style.display = "none";
 
-        }
+<input id="searchText" placeholder="Search username">
 
-    });
+
+<button onclick="searchUsers()">
+
+Search
+
+</button>
+
+
+<div id="searchResult"></div>
+
+
+`;
+
+
+
+}
+
+
+
+
+function searchUsers(){
+
+
+let text=document.getElementById("searchText").value.toLowerCase();
+
+
+let result=document.getElementById("searchResult");
+
+
+result.innerHTML="";
+
+
+
+users.forEach(function(user){
+
+
+if(user.username.toLowerCase().includes(text)){
+
+
+result.innerHTML += `
+
+
+<div class="card">
+
+${user.username}
+
+</div>
+
+
+`;
+
+}
+
+
+});
+
 
 }
 
@@ -245,32 +385,48 @@ function searchDua(){
 
 
 
-// Prayer Checklist
-function loadPrayerProgress(){
 
-    let prayers =
-    document.querySelectorAll(
-        'input[type="checkbox"]'
-    );
+// MEMBERS
 
 
-    prayers.forEach((prayer,index)=>{
+function showMembers(){
 
 
-        let saved =
-        localStorage.getItem(
-            "prayer" + index
-        );
+let html="<h2>👥 Members</h2>";
 
 
-        if(saved === "true"){
 
-            prayer.checked = true;
-
-        }
+users.forEach(function(user){
 
 
-    });
+let status =
+onlineUsers[user.username] ? "🟢 Online" : "⚪ Offline";
+
+
+
+html += `
+
+
+<div class="card">
+
+${user.username}
+
+<br>
+
+${status}
+
+</div>
+
+
+`;
+
+
+});
+
+
+
+document.getElementById("content").innerHTML=html;
+
 
 }
 
@@ -278,53 +434,721 @@ function loadPrayerProgress(){
 
 
 
-// Navigation
 
-function showHome(){
 
-    window.scrollTo({
-        top:0,
-        behavior:"smooth"
-    });
+
+// GROUPS
+
+
+function showGroups(){
+
+
+document.getElementById("content").innerHTML=`
+
+
+<h2>👨‍👩‍👦 Groups</h2>
+
+
+<input id="groupName" placeholder="Group name">
+
+
+<button onclick="createGroup()">
+
+Create Group
+
+</button>
+
+
+<div id="groupList"></div>
+
+
+`;
+
+
+
+displayGroups();
+
 
 }
 
 
 
-function showDuas(){
 
-    document.getElementById("duaList").scrollIntoView({
-        behavior:"smooth"
-    });
+function createGroup(){
+
+
+let name=document.getElementById("groupName").value;
+
+
+
+if(name.trim() !== ""){
+
+
+groups.push({
+
+name:name,
+
+creator:currentUser,
+
+members:[currentUser]
+
+});
+
+
+
+localStorage.setItem(
+
+"nuraqGroups",
+
+JSON.stringify(groups)
+
+);
+
+
+
+displayGroups();
+
 
 }
 
 
 
-function showTasbih(){
+}
 
-    document.getElementById("count").scrollIntoView({
-        behavior:"smooth"
-    });
+
+
+
+
+function displayGroups(){
+
+
+let box=document.getElementById("groupList");
+
+
+if(!box)return;
+
+
+
+box.innerHTML="";
+
+
+
+groups.forEach(function(group){
+
+
+box.innerHTML += `
+
+
+<div class="group">
+
+
+<h3>🏠 ${group.name}</h3>
+
+
+<p>Creator: ${group.creator}</p>
+
+
+<p>Members: ${group.members.join(", ")}</p>
+
+
+</div>
+
+
+`;
+
+
+
+});
+
 
 }
 
 
 
-function showAbout(){
 
-    document.querySelector("section:last-of-type")
-    .scrollIntoView({
-        behavior:"smooth"
-    });
 
-} if ("serviceWorker" in navigator) {
 
-    navigator.serviceWorker.register("service-worker.js")
-    .then(function(){
 
-        console.log("Nuraq Prayers offline support ready");
 
-    });
+// CHAT
 
-              }
+
+function showMessages(){
+
+
+document.getElementById("content").innerHTML=`
+
+
+<h2>💬 Chat</h2>
+
+
+<input id="messageText" placeholder="Write message">
+
+
+<button onclick="sendMessage()">
+
+Send
+
+</button>
+
+
+<div id="messageList"></div>
+
+
+`;
+
+
+
+displayMessages();
+
+
+}
+
+
+
+
+
+function sendMessage(){
+
+
+let text=document.getElementById("messageText").value;
+
+
+
+if(text.trim() !== ""){
+
+
+messages.push({
+
+user:currentUser,
+
+text:text,
+
+time:new Date().toLocaleString()
+
+});
+
+
+
+localStorage.setItem(
+
+"nuraqMessages",
+
+JSON.stringify(messages)
+
+);
+
+
+
+displayMessages();
+
+
+}
+
+
+}
+
+
+
+
+
+function displayMessages(){
+
+
+let box=document.getElementById("messageList");
+
+
+if(!box)return;
+
+
+
+box.innerHTML="";
+
+
+
+messages.forEach(function(message,index){
+
+
+box.innerHTML += `
+
+
+<div class="message">
+
+
+<b>${message.user}</b>
+
+
+<br>
+
+${message.text}
+
+
+<button onclick="deleteMessage(${index})">
+
+Delete
+
+</button>
+
+
+</div>
+
+
+`;
+
+
+
+});
+
+
+}
+
+
+
+
+
+function deleteMessage(index){
+
+
+messages.splice(index,1);
+
+
+
+localStorage.setItem(
+
+"nuraqMessages",
+
+JSON.stringify(messages)
+
+);
+
+
+
+displayMessages();
+
+
+}// REAL VOICE RECORDING
+
+
+function showVoice(){
+
+
+document.getElementById("content").innerHTML=`
+
+
+<h2>🎤 Voice Recorder</h2>
+
+
+<div class="voice">
+
+
+<button onclick="startRecording()">
+
+Start Recording
+
+</button>
+
+
+<button onclick="stopRecording()">
+
+Stop Recording
+
+</button>
+
+
+<div id="audioResult"></div>
+
+
+</div>
+
+
+`;
+
+
+
+}
+
+
+
+
+
+function startRecording(){
+
+
+navigator.mediaDevices.getUserMedia({audio:true})
+
+.then(function(stream){
+
+
+mediaRecorder = new MediaRecorder(stream);
+
+
+audioChunks=[];
+
+
+mediaRecorder.start();
+
+
+alert("Recording started 🎤");
+
+
+
+mediaRecorder.ondataavailable=function(event){
+
+
+audioChunks.push(event.data);
+
+
+};
+
+
+
+})
+
+.catch(function(){
+
+
+alert("Microphone permission denied");
+
+
+});
+
+
+}
+
+
+
+
+
+function stopRecording(){
+
+
+if(mediaRecorder){
+
+
+mediaRecorder.stop();
+
+
+
+mediaRecorder.onstop=function(){
+
+
+let audioBlob =
+new Blob(audioChunks,{type:"audio/mp3"});
+
+
+audioURL =
+URL.createObjectURL(audioBlob);
+
+
+
+document.getElementById("audioResult").innerHTML=`
+
+
+<audio controls class="audio-player">
+
+<source src="${audioURL}">
+
+</audio>
+
+
+`;
+
+
+
+};
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+// POSTS
+
+
+function showPosts(){
+
+
+document.getElementById("content").innerHTML=`
+
+
+<h2>📷 Posts</h2>
+
+
+<textarea id="postText" placeholder="Write post"></textarea>
+
+
+<button onclick="createPost()">
+
+Post
+
+</button>
+
+
+<div id="postList"></div>
+
+
+`;
+
+
+
+displayPosts();
+
+
+}
+
+
+
+
+
+function createPost(){
+
+
+let text=document.getElementById("postText").value;
+
+
+
+if(text.trim() !== ""){
+
+
+posts.push({
+
+user:currentUser,
+
+text:text,
+
+likes:0,
+
+comments:[]
+
+});
+
+
+
+localStorage.setItem(
+
+"nuraqPosts",
+
+JSON.stringify(posts)
+
+);
+
+
+
+displayPosts();
+
+
+}
+
+
+
+}
+
+
+
+
+
+function displayPosts(){
+
+
+let box=document.getElementById("postList");
+
+
+if(!box)return;
+
+
+
+box.innerHTML="";
+
+
+
+posts.forEach(function(post,index){
+
+
+box.innerHTML += `
+
+
+<div class="post">
+
+
+<b>${post.user}</b>
+
+
+<p>${post.text}</p>
+
+
+<button onclick="likePost(${index})">
+
+❤️ ${post.likes}
+
+</button>
+
+
+<button onclick="deletePost(${index})">
+
+Delete
+
+</button>
+
+
+</div>
+
+
+`;
+
+
+
+});
+
+
+}
+
+
+
+
+
+function likePost(index){
+
+
+posts[index].likes++;
+
+
+
+localStorage.setItem(
+
+"nuraqPosts",
+
+JSON.stringify(posts)
+
+);
+
+
+
+displayPosts();
+
+
+}
+
+
+
+
+
+function deletePost(index){
+
+
+posts.splice(index,1);
+
+
+
+localStorage.setItem(
+
+"nuraqPosts",
+
+JSON.stringify(posts)
+
+);
+
+
+
+displayPosts();
+
+
+}
+
+
+
+
+
+
+
+// NOTIFICATIONS
+
+
+function showNotifications(){
+
+
+document.getElementById("content").innerHTML=`
+
+
+<h2>🔔 Notifications</h2>
+
+
+<div class="notification">
+
+No new notifications
+
+</div>
+
+
+`;
+
+
+
+}
+
+
+
+
+
+
+
+
+// SETTINGS
+
+
+function showSettings(){
+
+
+document.getElementById("content").innerHTML=`
+
+
+<h2>⚙️ Settings</h2>
+
+
+<div class="card">
+
+Nuraq Connect v6
+
+</div>
+
+
+<button onclick="logout()">
+
+Logout
+
+</button>
+
+
+`;
+
+
+
+}
+
+
+
+
+function logout(){
+
+
+currentUser="";
+
+
+document.getElementById("homePage").style.display="none";
+
+
+document.getElementById("signupPage").style.display="block";
+
+
+document.getElementById("loginPage").style.display="block";
+
+
+}
